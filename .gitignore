@@ -9,3 +9,5 @@ runs/
 train.npz
 validation.npz
 test.npz
+results/
+data/
