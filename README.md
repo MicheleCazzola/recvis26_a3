@@ -14,35 +14,52 @@
 
 We will be using the ten-class CIFAR-10 dataset. The training and validation images come from standard CIFAR-10, while the test images come from a synthetic, distribution-shifted target domain. Download `train.npz`, `validation.npz`, `test.npz`, and `sample_submission.csv` from the private Kaggle competition. The test image labels are not provided.
 
-#### Training and validating your model
-
-You can use either the notebook or the command-line script.
-
-To use the notebook, open `main_notebook.ipynb`. On Kaggle, attach the competition data and update `INPUT_DIR` if necessary. For local use, set:
-
-```bash
-export RECVIS_INPUT_DIR=/path/to/competition/data
-export RECVIS_OUTPUT_DIR=/path/to/output
-jupyter lab main_notebook.ipynb
-```
-
-To train from the command line, run:
-
-```bash
-python main.py --data /path/to/competition/data --output runs/resnet18 --model resnet18 --epochs 10
-```
-
-For an ImageNet-pretrained model, add `--pretrained`. Run `python main.py --help` to see all options.
-
-Modify `main_notebook.ipynb`, `main.py`, `model.py`, and `data.py` for your assignment, with the aim of improving the validation and Kaggle scores. Both entry points provide a ResNet-18 baseline and support pretrained ResNets, ViT, and linear probing. The notebook also describes an optional OpenCLIP baseline.
-
-#### Evaluating your model on the test set
-
-Run the submission cell at the end of the notebook, or let `main.py` finish training. Both generate `submission.csv`, which you can upload to the private Kaggle competition website. The file must contain one integer label from 0 to 9 for every test ID.
-
 #### Rules
 
 Open-source models, pretrained checkpoints, and external data are allowed if they are fully documented in the report. Proprietary or closed models and API-only services are prohibited. Do not obtain, reconstruct, manually annotate, or otherwise access the hidden test labels.
+
+#### Approaches
+
+Two approaches are provided:
+- **Vision**: Fine-tune a pretrained vision model on CIFAR-10 (ViT in this case). For linear probe, the features are cached for efficiency.
+- **CLIP**: Use the pretrained CLIP model to classify images with text prompts. The CLIP model is frozen, and only the linear head is trained on CIFAR-10. ***Variant***: use WiSE-FT to fine-tune the CLIP model on CIFAR-10 and ensemble the results with a mixing coefficient $\alpha$ to control the importance of the fine-tuned model over the original CLIP model.
+
+#### Repository structure
+
+```
+<root>/
+├── data/                     <- CIFAR-10 dataset (train, validation, test)
+├── configs/
+    ├── config.yaml           <- default configuration file (initialized with the best configuration here)
+    └── <config_name>.yaml    <- configuration files for specific experiments
+├── src/                      <- source code (models, datasets, training, evaluation, utilities)             
+├── results/                  <- default folder for results (checkpoints, logs, predictions, etc.)  
+├── main.py                   <- entry point
+├── README.md                 <- this file
+├── requirements.txt          <- dependencies
+```
+
+#### Usage
+
+1. Run the following command to train a model with the default configuration:
+
+   ```bash
+   python main.py --config configs/config.yaml
+   ```
+
+2. To run a specific experiment, use the corresponding configuration file:
+
+   ```bash
+   python main.py --config configs/<config_name>.yaml
+   ```
+
+3. To describe the configuration options, run:
+
+   ```bash
+   python main.py --help
+   ```
+
+4. Further options can be specified by editing the configuration file [config.yaml](configs/config.yaml)
 
 #### Acknowledgments
 
