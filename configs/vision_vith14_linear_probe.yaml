@@ -1,0 +1,63 @@
+# Experiment: ViT-H/14 (IN-21k) linear probe
+# Reproduce: python main.py --from-config configs/vision_vith14_linear_probe.yaml
+
+# Data and results folders (GlobalConfig); relative paths: from the working directory. CLI --input-dir / --output-dir override them
+input_dir: data
+output_dir: results
+
+# Pipeline: vision or clip
+pipeline: vision
+
+# Shared
+seed: 42
+tta_flip: true                  # Mean of the image and its horizontal flip
+features_from: null             # Experiment folder: reuse the cached features
+batch_size: 128                 
+epochs: 20
+optimizer: adamw                
+lr: 0.001
+weight_decay: 0.0
+scheduler: cosine               
+warmup_fraction: 0.1            # Linear warmup (cosine / constant / onecycle); constant + warmup: warmup without decay
+label_smoothing: 0.0
+l2sp: 1.0e-4                    # L2SP regularization coefficient
+save_best_val_checkpoint: true  
+
+# Vision
+# Model
+library: timm                   # timm or torchvision
+model_name: vit_huge_patch14_224.orig_in21k
+pretrained: true
+weights: DEFAULT                # torchvision only; timm takes the weights from model_name
+trainable_blocks: 0             # 0 linear probe, k last k blocks, -1 all (linear probe and partial fine-tuning need pretrained weights)
+freeze_bn_stats: true
+image_size: 224                 # 32 for a ResNet from scratch
+resize_interpolation: bicubic
+
+# Augmentation (train, 32px): any of crop, flip, color, grayscale, augmix, randaugment (augmix or randaugment, not both)
+augmentations: []
+crop: random_resized_crop       # random_crop for a ResNet from scratch
+crop_padding: 4
+crop_scale: [0.8, 1.0]
+hflip_p: 0.5
+
+# Head
+normalize_features: true
+head_batch_size: 1024
+
+# Optimization (backbone)
+backbone_lr: 7.5e-4             # ViT: LR of the last block (usually lr * layer_decay); ResNet: usually lr * 0.1
+layer_decay: 0.75
+backbone_weight_decay: 0.0
+backbone_l2sp: 0.0              # Towards the pretrained weights
+momentum: 0.9                   # sgd only
+betas: [0.9, 0.999]             # adam / adamw only
+grad_clip: null
+
+# CLIP
+clip_model: ViT-H-14-quickgelu
+clip_pretrained: dfn5b
+prompt_set: imagenet            # base, cifar, imagenet or cifar+imagenet
+interpolation: bicubic
+wise_alpha: null                # null: zero-shot only; a: W = (1 - a) W_zeroshot + a W_trained, b = a b_trained
+batch_size_head: 1024

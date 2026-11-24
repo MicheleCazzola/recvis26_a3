@@ -1,11 +1,13 @@
-
+# Default configuration file
+# Initialized to the best performing experiment: CLIP (ViT-H/14 + DFN5B) zero-shot, ImageNet prompts
+# Run: python main.py [--from-config configs/config.yaml]
 
 # Data and results folders (GlobalConfig); relative paths: from the working directory. CLI --input-dir / --output-dir override them
 input_dir: data
 output_dir: results
 
 # Pipeline: vision or clip
-pipeline: vision
+pipeline: clip  
 
 # Shared
 seed: 42
@@ -20,7 +22,7 @@ scheduler: cosine
 warmup_fraction: 0.0            # Linear warmup (cosine / constant / onecycle); constant + warmup: warmup without decay
 label_smoothing: 0.0
 l2sp: 1.0e-4                    # L2SP regularization coefficient
-save_best_val_checkpoint: true  
+save_best_val_checkpoint: false  
 
 # Vision
 # Model

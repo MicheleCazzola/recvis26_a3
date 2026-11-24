@@ -10,6 +10,7 @@ from .utils import safe_tag
 # ----- Prompt templates -----
 
 # CLIP prompt templates (openai/CLIP: data/prompts.md for CIFAR-10, Prompt_Engineering_for_ImageNet.ipynb for ImageNet)
+# CIFAR templates: https://github.com/openai/CLIP/blob/main/data/prompts.md
 CIFAR_TEMPLATES = [
     "a photo of a {}.",
     "a blurry photo of a {}.",
@@ -31,6 +32,8 @@ CIFAR_TEMPLATES = [
     "a photo of the big {}.",
 ]
 
+# ImageNet templates: https://github.com/openai/CLIP/blob/main/notebooks/Prompt_Engineering_for_ImageNet.ipynb
+# The notebook may not be rendered in Github. In that case, download it or see https://colab.research.google.com/github/openai/CLIP/blob/main/notebooks/Prompt_Engineering_for_ImageNet.ipynb
 IMAGENET_TEMPLATES = [
     "a bad photo of a {}.",
     "a photo of many {}.",
