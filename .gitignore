@@ -11,3 +11,4 @@ validation.npz
 test.npz
 results/
 data/
+*.ipynb
